@@ -37,10 +37,9 @@ if language == "Indonesian":
     4. **Analisis Machine Learning**:
        - Pilih rasio keuangan yang ingin digunakan untuk analisis dari daftar *Select ratios for analysis*.
        - Pilih kolom target (harga saham perusahaan) dari dropdown *Select the target column*.
-       - Pilih model machine learning yang akan digunakan.
        - Klik *Run Model and Predict Stock Prices* untuk menjalankan model machine learning dan melihat hasil prediksi.
     5. **Hasil Analisis Machine Learning**:
-       - Website akan menampilkan metrik evaluasi model, seperti MSE, RMSE, MAE, MAPE, dan R².
+       - Website akan menampilkan metrik evaluasi model, seperti RMSE, MAE, MAPE, dan R².
        - Anda dapat melihat tabel perbandingan antara *Actual vs Predicted Stock Prices*.
        - Prediksi harga saham untuk periode berikutnya akan ditampilkan di bagian *Predicted Stock Price for the Next Period*.
        - Anda juga dapat melihat *Feature Importance* jika model mendukung.
@@ -55,10 +54,9 @@ elif language == "English":
     4. **Machine Learning Analysis**:
        - Select the financial ratios to use for analysis from the *Select ratios for analysis* list.
        - Select the target column (company's stock price) from the *Select the target column* dropdown.
-       - Choose the machine learning model to use.
        - Click *Run Model and Predict Stock Prices* to run the machine learning model and see the predictions.
     5. **Machine Learning Analysis Results**:
-       - The website will display model evaluation metrics such as MSE, RMSE, MAE, MAPE, and R².
+       - The website will display model evaluation metrics such as RMSE, MAE, MAPE, and R².
        - You can view a comparison table between *Actual vs Predicted Stock Prices*.
        - The stock price prediction for the next period will be displayed in the *Predicted Stock Price for the Next Period* section.
        - You can also view *Feature Importance* if the model supports it.
@@ -217,11 +215,21 @@ if uploaded_file:
                     st.markdown("### Model Evaluation Metrics")
                     st.write(f"**Model Used:** {model_choice}")
                     st.write(f"**Time Taken:** {elapsed_time:.2f} seconds")
-                    st.write(f"**Mean Squared Error (MSE):** {mean_squared_error(y_test, y_pred):.2f}")
+                    st.write(f"**Company Analyzed:** {selected_bank}")
+                    st.write(f"**Ratios Used for Analysis:** {', '.join(selected_ratios)}")
                     st.write(f"**Root Mean Squared Error (RMSE):** {np.sqrt(mean_squared_error(y_test, y_pred)):.2f}")
                     st.write(f"**Mean Absolute Error (MAE):** {mean_absolute_error(y_test, y_pred):.2f}")
                     st.write(f"**Mean Absolute Percentage Error (MAPE):** {mean_absolute_percentage_error(y_test, y_pred) * 100:.2f}%")
                     st.write(f"**R-squared (R²):** {r2_score(y_test, y_pred):.2f}")
+
+                    # Display feature importance below evaluation metrics (if applicable)
+                    if hasattr(model, "feature_importances_"):
+                        st.markdown("### Feature Importance")
+                        feature_importances = pd.DataFrame({
+                            "Feature": X.columns,
+                            "Importance": model.feature_importances_
+                        }).sort_values(by="Importance", ascending=False)
+                        st.dataframe(feature_importances)
 
                     # Display predictions vs actual as a table
                     st.markdown("### Actual vs Predicted Stock Prices")
@@ -234,12 +242,3 @@ if uploaded_file:
                     # Display next period prediction
                     st.markdown("### Predicted Stock Price for the Next Period")
                     st.write(f"**{next_period_prediction:.2f}**")
-
-                    # Feature importance (if applicable)
-                    if hasattr(model, "feature_importances_"):
-                        st.markdown("### Feature Importance")
-                        feature_importances = pd.DataFrame({
-                            "Feature": X.columns,
-                            "Importance": model.feature_importances_
-                        }).sort_values(by="Importance", ascending=False)
-                        st.dataframe(feature_importances)
