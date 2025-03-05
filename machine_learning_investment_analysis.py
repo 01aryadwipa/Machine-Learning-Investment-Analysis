@@ -11,7 +11,7 @@ st.markdown("<h1 style='text-align: center; margin-bottom: 50px;'>Machine Learni
 st.markdown("---")
 
 # Sidebar for title and file upload
-st.sidebar.title("Welcome to Machine Learning Investment Analysis")
+st.sidebar.title("I Love Gadis Welcome to Machine Learning Investment Analysis")
 
 # File upload section
 uploaded_file = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
