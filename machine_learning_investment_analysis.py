@@ -17,7 +17,8 @@ st.markdown("---")
 st.sidebar.title("Machine Learning Investment Analysis")
 
 # File upload section
-uploaded_file = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
+#uploaded_file = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
+uploaded_file = st.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
 
 # Function to parse the quarter column correctly
 def parse_quarter(quarter_str):
@@ -36,8 +37,8 @@ if uploaded_file:
         else:
             data = pd.read_excel(uploaded_file)
 
-        st.write("### 📊 Data Preview")
-        st.write(data.head())
+        st.write("### 📊 Pratinjau Data")
+        st.write(data.head(10))
 
         # Ensure the dataset has a 'quarter' column
         if 'quarter' not in data.columns:
@@ -51,24 +52,24 @@ if uploaded_file:
             data['quarter'] = pd.Categorical(data['quarter'], categories=sorted_quarters, ordered=True)
 
             # Visualization Section
-            st.subheader("📈 Data Visualization")
+            st.subheader("📈 Visualisasi Data")
 
             # Dynamically identify all available metrics
             all_columns = data.columns.tolist()
             available_metrics = [col for col in all_columns if col not in ["quarter", "price"]]
             available_metrics = sorted(available_metrics)
 
-            selected_metric = st.selectbox("📌 Choose a metric to visualize", available_metrics)
+            selected_metric = st.selectbox("📌 Pilih Variabel untuk Divisualisasikan", available_metrics)
 
             if selected_metric:
                 metric_data = data[['quarter', selected_metric]].copy()
                 metric_data.set_index('quarter', inplace=True)
                 
-                st.write(f"📊 **Trend of {selected_metric.upper()} Over Time**")
+                st.write(f"📊 **Perkembangan {selected_metric.upper()} dari Waktu ke Waktu**")
                 st.line_chart(metric_data)
 
             # Analysis Section
-            st.subheader("🤖 Machine Learning Analysis")
+            st.subheader("🤖 Analisis Machine Learning")
 
             # Machine Learning Model Selection (Moved from Sidebar to Main Section)
             model_options = {
@@ -80,7 +81,7 @@ if uploaded_file:
                 "Ridge Regression": Ridge()
             }
 
-            selected_model_name = st.selectbox("📌 Choose a Machine Learning Model", list(model_options.keys()))
+            selected_model_name = st.selectbox("📌 Pilih Model Machine Learning", list(model_options.keys()))
             selected_model = model_options[selected_model_name]
 
             # Selecting features and target variable
@@ -136,10 +137,10 @@ if uploaded_file:
                 mape = round(np.mean(np.abs((y_test - y_pred) / y_test)) * 100, 2)
                 r2 = round(r2_score(y_test, y_pred), 2)
 
-                st.write(f"### 📊 Model Performance Metrics ({selected_model_name})")
-                st.write(f"✅ Best Parameters: {grid_search.best_params_}")
-                st.write(f"📉 Root Mean Squared Error (RMSE): {rmse}")
-                st.write(f"📉 Mean Absolute Error (MAE): {mae}")
+                st.write(f"### 📊 Metrik Kinerja Model ({selected_model_name})")
+                st.write(f"✅ Parameter Terbaik: {grid_search.best_params_}")
+                st.write(f"📉 Root Mean Squared Error (RMSE): Rp {rmse}")
+                st.write(f"📉 Mean Absolute Error (MAE): Rp {mae}")
                 st.write(f"📉 Mean Absolute Percentage Error (MAPE): {mape}%")
                 st.write(f"📈 R-squared (R²): {r2}")
 
@@ -154,7 +155,7 @@ if uploaded_file:
                     st.write(feature_importances)
 
                 # Predict Stock Price for the Next Period
-                st.subheader("📈 Predict Stock Price for the Next Period")
+                st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
 
                 latest_row = data.iloc[-1][features].values.reshape(1, -1)
                 predicted_next_price = best_model.predict(latest_row)[0]
@@ -166,8 +167,22 @@ if uploaded_file:
                     q, quarter_num, year = match.groups()
                     quarter_num, year = int(quarter_num), int(year)
                     next_quarter = f"Q{1 if quarter_num == 4 else quarter_num + 1}_{year + (1 if quarter_num == 4 else 0)}"
-                    st.write(f"📌 **Predicted Stock Price for {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
+                    st.write(f"📌 **Perkiraan Harga Wajar Saham untuk Periode {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
+                # Disclaimer Section
+                st.write("")
+                st.write("")
+                st.markdown("### ⚠️ Disclaimer")
+                st.markdown("""
+                Hasil analisis yang disajikan pada website ini murni hanya untuk tujuan informasi dan edukasi berdasarkan sudut pandang machine learning. 
+                Hasil analisis ini bukan untuk tujuan saran, rekomendasi, ajakan, dorongan, ataupun tekanan untuk melakukan keputusan investasi, baik itu pembelian maupun penjualan suatu instrumen investasi. 
+                Analisis ini tidak menjamin kepastian hasil, melainkan hanya merupakan perkiraan berdasarkan pemodelan machine learning.
 
+                Investasi memiliki berbagai risiko, yang mungkin tidak tercerminkan dalam dataset yang digunakan. Risiko ini dapat berupa pengaruh sentimen pasar, dinamika sosial-ekonomi-politik, perubahan struktur manajemen atau kebijakan operasional perusahaan, kejadian luar biasa (force majeure), serta variabel-variabel lainnya, termasuk yang sulit diperoleh ataupun sulit dikonversi/dikuantifikasi untuk pemodelan. 
+                
+                Dengan demikian, pengembang website menyatakan bahwa pemodelan yang telah dilakukan masih memiliki berbagai keterbatasan sebagaimana yang telah dijabarkan, dan hasil pemodelan ini tidak dianjurkan untuk menjadi satu-satunya dasar pengambilan keputusan investasi, melainkan hanya sebagai sekadar referensi tambahan dalam konteks penggunaan metode machine learning. 
+                
+                **Segala keputusan investasi merupakan tanggung jawab pengguna sepenuhnya.**
+                """)
     except Exception as e:
         st.error(f"⚠️ An error occurred: {e}")
 
