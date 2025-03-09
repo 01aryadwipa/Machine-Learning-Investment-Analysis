@@ -170,7 +170,7 @@ else:
             q, quarter_num, year = match.groups()
             quarter_num, year = int(quarter_num), int(year)
             next_quarter = f"Q{1 if quarter_num == 4 else quarter_num + 1}_{year + (1 if quarter_num == 4 else 0)}"
-            st.write(f"📌 **Perkiraan Harga Wajar Saham ({selected_stock}) untuk Periode {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
+            st.write(f"📌 **Perkiraan Harga Wajar Saham {selected_stock} untuk Periode {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
         st.write("")
         st.write("")
         st.markdown("### ⚠️ Disclaimer")
