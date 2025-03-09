@@ -81,6 +81,7 @@ Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusa
 
 # 📌 STOCK SELECTION DROPDOWN
 st.markdown("### 📌 Pilih Saham")
+
 stock_options = {
     "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
     "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
@@ -92,9 +93,12 @@ stock_options = {
     "UNTR - PT United Tractors Tbk": "untr.xlsx"
 }
 
+# Sort stocks based on their ticker (first four characters)
+sorted_stock_keys = sorted(stock_options.keys(), key=lambda x: x[:4])
 
-selected_stock = st.selectbox("Pilih Saham untuk Analisis", list(stock_options.keys()))
+selected_stock = st.selectbox("Pilih Saham untuk Analisis", sorted_stock_keys)
 data_file = stock_options[selected_stock]  # Get the corresponding file name
+
 
 # Try to load from local file first, fallback to GitHub if not found
 try:
