@@ -13,19 +13,15 @@ import re
 st.markdown("<h1 style='text-align: center; margin-bottom: 50px;'>Machine Learning Investment Analysis</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Sidebar for title and file upload
-st.sidebar.title("Machine Learning Investment Analysis")
-
 # Sidebar: Panduan Penggunaan
+st.sidebar.title("Machine Learning Investment Analysis")
 st.sidebar.markdown("### 📌 Panduan Penggunaan")
 st.sidebar.info("""
-1️⃣ **Unggah Data**  
-   - Klik tombol **Upload your dataset**  
-   - Gunakan file **Excel (XLSX) atau CSV**  
-   - Pastikan dataset memiliki kolom **quarter** dan **price**  
+1️⃣ **Pilih Saham**  
+   - Gunakan dropdown untuk memilih saham yang ingin dianalisis.  
 
 2️⃣ **Pilih Model Machine Learning**  
-   - Tentukan model prediksi yang ingin digunakan  
+   - Tentukan model prediksi yang ingin digunakan.  
    - Model yang tersedia:  
      - **Random Forest** (Akurasi tinggi, kompleks)  
      - **Gradient Boosting** (Bagus untuk data non-linear)  
@@ -34,64 +30,38 @@ st.sidebar.info("""
      - **Lasso/Ridge Regression** (Untuk mengurangi multikolinearitas)  
 
 3️⃣ **Analisis Data & Visualisasi**  
-   - Pilih variabel untuk divisualisasikan  
-   - Lihat tren data dari waktu ke waktu  
+   - Pilih variabel untuk divisualisasikan.  
+   - Lihat tren data dari waktu ke waktu.  
 
 4️⃣ **Prediksi Harga Saham**  
-   - Model akan memprediksi **harga wajar saham di kuartal berikutnya**  
-   - Hasil prediksi akan ditampilkan di bagian bawah  
-
----
-
-### 📊 **Penjelasan Metrik Evaluasi Model**  
-Model yang digunakan akan dievaluasi dengan **empat metrik utama**:
-
-🔹 **Root Mean Squared Error (RMSE)**  
-   - Mengukur seberapa besar kesalahan prediksi dibandingkan dengan nilai asli  
-   - Semakin **kecil**, semakin **baik** modelnya  
-   - **Kategori:**
-     - **RMSE < 5% dari harga rata-rata** → **Baik** ✅  
-     - **RMSE 5% - 10%** → **Cukup Baik**  
-     - **RMSE > 10%** → **Kurang Baik** ❌  
-
-🔹 **Mean Absolute Error (MAE)**  
-   - Rata-rata perbedaan absolut antara harga asli dan prediksi  
-   - Nilai **lebih kecil** menunjukkan **model lebih akurat**  
-   - **Kategori:**
-     - **MAE < 5% dari harga rata-rata** → **Baik** ✅  
-     - **MAE 5% - 10%** → **Cukup Baik**  
-     - **MAE > 10%** → **Kurang Baik** ❌  
-
-🔹 **Mean Absolute Percentage Error (MAPE)**  
-   - Mengukur kesalahan prediksi dalam **persentase**  
-   - **Semakin kecil**, semakin baik  
-   - **Kategori:**
-     - **MAPE < 10%** → **Akurasi Tinggi** ✅  
-     - **MAPE 10% - 20%** → **Akurasi Cukup**  
-     - **MAPE > 20%** → **Kurang Akurat** ❌  
-
-🔹 **R-Squared (R²)**  
-   - Mengukur seberapa baik model menjelaskan variasi data  
-   - **Nilai mendekati 1** berarti model sangat akurat  
-   - **Kategori:**
-     - **R² > 0.9** → **Sangat Baik** ✅  
-     - **0.7 ≤ R² ≤ 0.9** → **Baik**  
-     - **0.5 ≤ R² < 0.7** → **Cukup Baik**  
-     - **R² < 0.5** → **Kurang Baik** ❌  
+   - Model akan memprediksi **harga wajar saham di kuartal berikutnya**.  
+   - Hasil prediksi akan ditampilkan di bagian bawah.  
 
 ⚠️ **Catatan:**  
-Hasil prediksi adalah perkiraan **berdasarkan model machine learning**. Keputusan investasi tetap menjadi tanggung jawab pengguna sepenuhnya.
+Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusan investasi tetap menjadi tanggung jawab pengguna sepenuhnya.
 """)
 
-
-# File upload section
-#stock_options = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
+# 📌 STOCK SELECTION DROPDOWN
 st.sidebar.markdown("### 📌 Pilih Saham")
 stock_options = {
     "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
     "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
     "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx"
 }
+
+selected_stock = st.sidebar.selectbox("Pilih Saham untuk Analisis", list(stock_options.keys()))
+data_file = stock_options[selected_stock]  # Get the corresponding file name
+
+# Try to load from local file first, fallback to GitHub if not found
+try:
+    data = pd.read_excel(data_file)
+except FileNotFoundError:
+    github_base_url = "https://raw.githubusercontent.com/01aryadwipa/Machine-Learning-Investment-Analysis/main/"
+    data_url = github_base_url + data_file
+    data = pd.read_excel(data_url)
+
+st.write(f"### 📊 Pratinjau Data ({selected_stock})")
+st.write(data.head(10))
 
 # Function to parse the quarter column correctly
 def parse_quarter(quarter_str):
@@ -102,166 +72,81 @@ def parse_quarter(quarter_str):
     else:
         return (0, quarter_str)  # If format is invalid, keep it at the bottom
 
-# Dropdown menu for stock selection
-selected_stock = st.sidebar.selectbox("📌 Pilih Saham", list(stock_options.keys()))
+# Ensure the dataset has a 'quarter' column
+if 'quarter' not in data.columns:
+    st.error("Dataset harus memiliki kolom 'quarter' untuk visualisasi yang tepat.")
+else:
+    # Reverse the dataset order to ensure Q1 2009 is at the top and Q4 2024 at the bottom
+    data = data.iloc[::-1].reset_index(drop=True)
 
-if selected_stock:
-    try:
-        # Load the selected stock's dataset
-        file_path = stock_options[selected_stock]  # Get the filename from the dictionary
+    # Sort quarters in **ascending order** (Q1 2009 → Q4 2024)
+    sorted_quarters = sorted(data['quarter'].unique(), key=parse_quarter)
+    data['quarter'] = pd.Categorical(data['quarter'], categories=sorted_quarters, ordered=True)
 
-        if file_path.endswith('.csv'):
-            data = pd.read_csv(file_path)
-        else:
-            data = pd.read_excel(file_path)
+    # 📈 Visualization Section
+    st.subheader("📈 Visualisasi Data")
+    available_metrics = sorted([col for col in data.columns if col not in ["quarter", "price"]])
+    selected_metric = st.selectbox("📌 Pilih Variabel untuk Divisualisasikan", available_metrics)
+    
+    if selected_metric:
+        metric_data = data[['quarter', selected_metric]].copy()
+        metric_data.set_index('quarter', inplace=True)
+        st.write(f"📊 **Perkembangan {selected_metric.upper()} dari Waktu ke Waktu**")
+        st.line_chart(metric_data)
 
-        st.write("### 📊 Pratinjau Data")
-        st.write(data.head(10))
+    # 🤖 Machine Learning Section
+    st.subheader("🤖 Analisis Machine Learning")
 
-        # Ensure the dataset has a 'quarter' column
-        if 'quarter' not in data.columns:
-            st.error("The dataset must include a 'quarter' column for proper visualization.")
-        else:
-            # Reverse the dataset order to ensure Q1 2009 is at the top and Q4 2024 at the bottom
-            data = data.iloc[::-1].reset_index(drop=True)
+    model_options = {
+        "Random Forest": RandomForestRegressor(),
+        "Gradient Boosting": GradientBoostingRegressor(),
+        "XGBoost": XGBRegressor(),
+        "Linear Regression": LinearRegression(),
+        "Lasso Regression": Lasso(),
+        "Ridge Regression": Ridge()
+    }
 
-            # Sort quarters in **ascending order** (Q1 2009 → Q4 2024)
-            sorted_quarters = sorted(data['quarter'].unique(), key=parse_quarter)
-            data['quarter'] = pd.Categorical(data['quarter'], categories=sorted_quarters, ordered=True)
+    selected_model_name = st.selectbox("📌 Pilih Model Machine Learning", list(model_options.keys()))
+    selected_model = model_options[selected_model_name]
 
-            # Visualization Section
-            st.subheader("📈 Visualisasi Data")
+    features = [col for col in data.columns if col not in ['quarter', 'price']]
+    target = 'price'
 
-            # Dynamically identify all available metrics
-            all_columns = data.columns.tolist()
-            available_metrics = [col for col in all_columns if col not in ["quarter", "price"]]
-            available_metrics = sorted(available_metrics)
+    if all(col in data.columns for col in [target] + features):
+        X = data[features]
+        y = data[target]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            selected_metric = st.selectbox("📌 Pilih Variabel untuk Divisualisasikan", available_metrics)
+        grid_search = GridSearchCV(
+            estimator=selected_model,
+            param_grid={"Random Forest": {'n_estimators': [50, 100, 200]},
+                        "Gradient Boosting": {'n_estimators': [50, 100, 200]},
+                        "XGBoost": {'n_estimators': [50, 100, 200]},
+                        "Lasso Regression": {'alpha': [0.01, 0.1, 1.0]},
+                        "Ridge Regression": {'alpha': [0.01, 0.1, 1.0]},
+                        "Linear Regression": {}}.get(selected_model_name, {}),
+            cv=3, scoring='neg_mean_squared_error', verbose=1, n_jobs=-1
+        )
 
-            if selected_metric:
-                metric_data = data[['quarter', selected_metric]].copy()
-                metric_data.set_index('quarter', inplace=True)
-                
-                st.write(f"📊 **Perkembangan {selected_metric.upper()} dari Waktu ke Waktu**")
-                st.line_chart(metric_data)
+        grid_search.fit(X_train, y_train)
+        best_model = grid_search.best_estimator_
 
-            # Analysis Section
-            st.subheader("🤖 Analisis Machine Learning")
+        y_pred = best_model.predict(X_test)
+        rmse = round(np.sqrt(mean_squared_error(y_test, y_pred)), 2)
+        mae = round(mean_absolute_error(y_test, y_pred), 2)
+        mape = round(np.mean(np.abs((y_test - y_pred) / y_test)) * 100, 2)
+        r2 = round(r2_score(y_test, y_pred), 2)
 
-            # Machine Learning Model Selection (Moved from Sidebar to Main Section)
-            model_options = {
-                "Random Forest": RandomForestRegressor(),
-                "Gradient Boosting": GradientBoostingRegressor(),
-                "XGBoost": XGBRegressor(),
-                "Linear Regression": LinearRegression(),
-                "Lasso Regression": Lasso(),
-                "Ridge Regression": Ridge()
-            }
+        st.write(f"### 📊 Metrik Kinerja Model ({selected_model_name})")
+        st.write(f"✅ Parameter Terbaik: {grid_search.best_params_}")
+        st.write(f"📉 RMSE: Rp {rmse}")
+        st.write(f"📉 MAE: Rp {mae}")
+        st.write(f"📉 MAPE: {mape}%")
+        st.write(f"📈 R²: {r2}")
 
-            selected_model_name = st.selectbox("📌 Pilih Model Machine Learning", list(model_options.keys()))
-            selected_model = model_options[selected_model_name]
-
-            # Selecting features and target variable
-            features = [col for col in data.columns if col not in ['quarter', 'price']]
-            target = 'price'
-
-            # Ensure required columns exist
-            if not all(col in data.columns for col in [target] + features):
-                st.error("The dataset must include 'price' and relevant financial ratios for analysis.")
-            else:
-                # Train-test split
-                X = data[features]
-                y = data[target]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                # Hyperparameter tuning using GridSearchCV
-                param_grid = {
-                    "Random Forest": {
-                        'n_estimators': [50, 100, 200],
-                        'max_depth': [None, 10, 20],
-                        'min_samples_split': [2, 5, 10]
-                    },
-                    "Gradient Boosting": {
-                        'n_estimators': [50, 100, 200],
-                        'learning_rate': [0.01, 0.1, 0.2],
-                        'max_depth': [3, 5, 10]
-                    },
-                    "XGBoost": {
-                        'n_estimators': [50, 100, 200],
-                        'learning_rate': [0.01, 0.1, 0.2],
-                        'max_depth': [3, 5, 10]
-                    },
-                    "Lasso Regression": {'alpha': [0.01, 0.1, 1.0]},
-                    "Ridge Regression": {'alpha': [0.01, 0.1, 1.0]},
-                    "Linear Regression": {}
-                }
-
-                grid_search = GridSearchCV(
-                    estimator=selected_model,
-                    param_grid=param_grid[selected_model_name] if selected_model_name in param_grid else {},
-                    cv=3,
-                    scoring='neg_mean_squared_error',
-                    verbose=1,
-                    n_jobs=-1
-                )
-                grid_search.fit(X_train, y_train)
-                best_model = grid_search.best_estimator_
-
-                # Predictions and metrics
-                y_pred = best_model.predict(X_test)
-                rmse = round(np.sqrt(mean_squared_error(y_test, y_pred)), 2)
-                mae = round(mean_absolute_error(y_test, y_pred), 2)
-                mape = round(np.mean(np.abs((y_test - y_pred) / y_test)) * 100, 2)
-                r2 = round(r2_score(y_test, y_pred), 2)
-
-                st.write(f"### 📊 Metrik Kinerja Model ({selected_model_name})")
-                st.write(f"✅ Parameter Terbaik: {grid_search.best_params_}")
-                st.write(f"📉 Root Mean Squared Error (RMSE): Rp {rmse}")
-                st.write(f"📉 Mean Absolute Error (MAE): Rp {mae}")
-                st.write(f"📉 Mean Absolute Percentage Error (MAPE): {mape}%")
-                st.write(f"📈 R-squared (R²): {r2}")
-
-                # Feature importance (for tree-based models)
-                if selected_model_name in ["Random Forest", "Gradient Boosting", "XGBoost"]:
-                    feature_importances = pd.DataFrame({
-                        "Feature": X.columns,
-                        "Importance": best_model.feature_importances_
-                    }).sort_values(by="Importance", ascending=False)
-
-                    st.write("### 🔥 Feature Importance")
-                    st.write(feature_importances)
-
-                # Predict Stock Price for the Next Period
-                st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
-
-                latest_row = data.iloc[-1][features].values.reshape(1, -1)
-                predicted_next_price = best_model.predict(latest_row)[0]
-
-                last_quarter = data['quarter'].iloc[-1]
-                match = re.match(r'(q)(\d)_(\d+)', last_quarter.lower())
-
-                if match:
-                    q, quarter_num, year = match.groups()
-                    quarter_num, year = int(quarter_num), int(year)
-                    next_quarter = f"Q{1 if quarter_num == 4 else quarter_num + 1}_{year + (1 if quarter_num == 4 else 0)}"
-                    st.write(f"📌 **Perkiraan Harga Wajar Saham untuk Periode {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
-                # Disclaimer Section
-                st.write("")
-                st.write("")
-                st.markdown("### ⚠️ Disclaimer")
-                st.markdown("""
-                Hasil analisis yang disajikan pada website ini murni hanya untuk tujuan informasi dan edukasi berdasarkan sudut pandang machine learning. 
-                Hasil analisis ini bukan untuk tujuan saran, rekomendasi, ajakan, dorongan, ataupun tekanan untuk melakukan keputusan investasi, baik itu pembelian maupun penjualan suatu instrumen investasi. 
-                Analisis ini tidak menjamin kepastian hasil, melainkan hanya merupakan perkiraan berdasarkan pemodelan machine learning.
-
-                Investasi memiliki berbagai risiko, yang mungkin tidak tercerminkan dalam dataset yang digunakan. Risiko ini dapat berupa pengaruh sentimen pasar, dinamika sosial-ekonomi-politik, perubahan struktur manajemen atau kebijakan operasional perusahaan, kejadian luar biasa (force majeure), serta variabel-variabel lainnya, termasuk yang sulit diperoleh ataupun sulit dikonversi/dikuantifikasi untuk pemodelan. 
-                
-                Dengan demikian, pengembang website menyatakan bahwa pemodelan yang telah dilakukan masih memiliki berbagai keterbatasan sebagaimana yang telah dijabarkan, dan hasil pemodelan ini tidak dianjurkan untuk menjadi satu-satunya dasar pengambilan keputusan investasi, melainkan hanya sebagai sekadar referensi tambahan dalam konteks penggunaan metode machine learning. 
-                
-                **Segala keputusan investasi merupakan tanggung jawab pengguna sepenuhnya.**
-                """)
-    except Exception as e:
-        st.error(f"⚠️ An error occurred: {e}")
+        st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
+        latest_row = data.iloc[-1][features].values.reshape(1, -1)
+        predicted_next_price = best_model.predict(latest_row)[0]
+        st.write(f"📌 **Perkiraan Harga Wajar Saham ({selected_stock}):** **{round(predicted_next_price, 2)}**")
 
 st.markdown("---")
