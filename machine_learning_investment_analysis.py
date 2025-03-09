@@ -144,10 +144,23 @@ else:
         st.write(f"📉 MAPE: {mape}%")
         st.write(f"📈 R²: {r2}")
 
+#        st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
+#        latest_row = data.iloc[-1][features].values.reshape(1, -1)
+#        predicted_next_price = best_model.predict(latest_row)[0]
+#        st.write(f"📌 **Perkiraan Harga Wajar Saham ({selected_stock}):** **{round(predicted_next_price, 2)}**")
         st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
+
         latest_row = data.iloc[-1][features].values.reshape(1, -1)
         predicted_next_price = best_model.predict(latest_row)[0]
-        st.write(f"📌 **Perkiraan Harga Wajar Saham ({selected_stock}):** **{round(predicted_next_price, 2)}**")
+
+        last_quarter = data['quarter'].iloc[-1]
+        match = re.match(r'(q)(\d)_(\d+)', last_quarter.lower())
+
+        if match:
+            q, quarter_num, year = match.groups()
+            quarter_num, year = int(quarter_num), int(year)
+            next_quarter = f"Q{1 if quarter_num == 4 else quarter_num + 1}_{year + (1 if quarter_num == 4 else 0)}"
+            st.write(f"📌 **Perkiraan Harga Wajar Saham untuk Periode {next_quarter} ({selected_model_name}):** **{round(predicted_next_price, 2)}**")
         st.write("")
         st.write("")
         st.markdown("### ⚠️ Disclaimer")
