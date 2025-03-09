@@ -85,7 +85,8 @@ else:
 
     # 📈 Visualization Section
     st.subheader("📈 Visualisasi Data")
-    available_metrics = sorted([col for col in data.columns if col not in ["quarter", "price"]])
+#    available_metrics = sorted([col for col in data.columns if col not in ["quarter", "price"]])
+    available_metrics = sorted([col for col in data.columns if col not in ["quarter"]])
     selected_metric = st.selectbox("📌 Pilih Variabel untuk Divisualisasikan", available_metrics)
     
     if selected_metric:
