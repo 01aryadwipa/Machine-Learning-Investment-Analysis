@@ -35,7 +35,45 @@ st.sidebar.info("""
 
 4️⃣ **Prediksi Harga Saham**  
    - Model akan memprediksi **harga wajar saham di kuartal berikutnya**.  
-   - Hasil prediksi akan ditampilkan di bagian bawah.  
+   - Hasil prediksi akan ditampilkan di bagian bawah. 
+
+---
+
+### 📊 **Penjelasan Metrik Evaluasi Model**  
+Model yang digunakan akan dievaluasi dengan **empat metrik utama**:
+
+🔹 **Root Mean Squared Error (RMSE)**  
+   - Mengukur seberapa besar kesalahan prediksi dibandingkan dengan nilai asli  
+   - Semakin **kecil**, semakin **baik** modelnya  
+   - **Kategori:**
+     - **RMSE < 5% dari harga rata-rata** → **Baik** ✅  
+     - **RMSE 5% - 10%** → **Cukup Baik**  
+     - **RMSE > 10%** → **Kurang Baik** ❌  
+
+🔹 **Mean Absolute Error (MAE)**  
+   - Rata-rata perbedaan absolut antara harga asli dan prediksi  
+   - Nilai **lebih kecil** menunjukkan **model lebih akurat**  
+   - **Kategori:**
+     - **MAE < 5% dari harga rata-rata** → **Baik** ✅  
+     - **MAE 5% - 10%** → **Cukup Baik**  
+     - **MAE > 10%** → **Kurang Baik** ❌  
+
+🔹 **Mean Absolute Percentage Error (MAPE)**  
+   - Mengukur kesalahan prediksi dalam **persentase**  
+   - **Semakin kecil**, semakin baik  
+   - **Kategori:**
+     - **MAPE < 10%** → **Akurasi Tinggi** ✅  
+     - **MAPE 10% - 20%** → **Akurasi Cukup**  
+     - **MAPE > 20%** → **Kurang Akurat** ❌  
+
+🔹 **R-Squared (R²)**  
+   - Mengukur seberapa baik model menjelaskan variasi data  
+   - **Nilai mendekati 1** berarti model sangat akurat  
+   - **Kategori:**
+     - **R² > 0.9** → **Sangat Baik** ✅  
+     - **0.7 ≤ R² ≤ 0.9** → **Baik**  
+     - **0.5 ≤ R² < 0.7** → **Cukup Baik**  
+     - **R² < 0.5** → **Kurang Baik** ❌ 
 
 ⚠️ **Catatan:**  
 Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusan investasi tetap menjadi tanggung jawab pengguna sepenuhnya.
@@ -45,11 +83,15 @@ Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusa
 st.markdown("### 📌 Pilih Saham")
 stock_options = {
     "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
-    "BBNI - PT Bank Negara Indonesia Tbk": "bbni.xlsx",
     "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
+    "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx",
     "BMRI - PT Bank Mandiri Tbk": "bmri.xlsx",
-    "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx"
+    "BBNI - PT Bank Negara Indonesia Tbk": "bbni.xlsx",
+    "ICBP - PT Indofood CBP Sukses Makmur Tbk": "icbp.xlsx",
+    "INDF - PT Indofood Sukses Makmur Tbk": "indf.xlsx",
+    "UNTR - PT United Tractors Tbk": "untr.xlsx"
 }
+
 
 selected_stock = st.selectbox("Pilih Saham untuk Analisis", list(stock_options.keys()))
 data_file = stock_options[selected_stock]  # Get the corresponding file name
