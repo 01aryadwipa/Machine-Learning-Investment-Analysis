@@ -148,5 +148,18 @@ else:
         latest_row = data.iloc[-1][features].values.reshape(1, -1)
         predicted_next_price = best_model.predict(latest_row)[0]
         st.write(f"📌 **Perkiraan Harga Wajar Saham ({selected_stock}):** **{round(predicted_next_price, 2)}**")
+        st.write("")
+        st.write("")
+        st.markdown("### ⚠️ Disclaimer")
+        st.markdown("""
+                Hasil analisis yang disajikan pada website ini murni hanya untuk tujuan informasi dan edukasi berdasarkan sudut pandang machine learning. 
+                Hasil analisis ini bukan untuk tujuan saran, rekomendasi, ajakan, dorongan, ataupun tekanan untuk melakukan keputusan investasi, baik itu pembelian maupun penjualan suatu instrumen investasi. 
+                Analisis ini tidak menjamin kepastian hasil, melainkan hanya merupakan perkiraan berdasarkan pemodelan machine learning.
 
+                Investasi memiliki berbagai risiko, yang mungkin tidak tercerminkan dalam dataset yang digunakan. Risiko ini dapat berupa pengaruh sentimen pasar, dinamika sosial-ekonomi-politik, perubahan struktur manajemen atau kebijakan operasional perusahaan, kejadian luar biasa (force majeure), serta variabel-variabel lainnya, termasuk yang sulit diperoleh ataupun sulit dikonversi/dikuantifikasi untuk pemodelan. 
+                
+                Dengan demikian, pengembang website menyatakan bahwa pemodelan yang telah dilakukan masih memiliki berbagai keterbatasan sebagaimana yang telah dijabarkan, dan hasil pemodelan ini tidak dianjurkan untuk menjadi satu-satunya dasar pengambilan keputusan investasi, melainkan hanya sebagai sekadar referensi tambahan dalam konteks penggunaan metode machine learning. 
+                
+                **Segala keputusan investasi merupakan tanggung jawab pengguna sepenuhnya.**
+                """)
 st.markdown("---")
