@@ -42,7 +42,7 @@ Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusa
 """)
 
 # 📌 STOCK SELECTION DROPDOWN
-st.sidebar.markdown("### 📌 Pilih Saham")
+st.markdown("### 📌 Pilih Saham")
 stock_options = {
     "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
     "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
