@@ -85,8 +85,13 @@ Hasil prediksi adalah perkiraan **berdasarkan model machine learning**. Keputusa
 
 
 # File upload section
-#uploaded_file = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
-uploaded_file = st.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
+#stock_options = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
+st.sidebar.markdown("### 📌 Pilih Saham")
+stock_options = {
+    "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
+    "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
+    "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx"
+}
 
 # Function to parse the quarter column correctly
 def parse_quarter(quarter_str):
@@ -97,13 +102,18 @@ def parse_quarter(quarter_str):
     else:
         return (0, quarter_str)  # If format is invalid, keep it at the bottom
 
-if uploaded_file:
+# Dropdown menu for stock selection
+selected_stock = st.sidebar.selectbox("📌 Pilih Saham", list(stock_options.keys()))
+
+if selected_stock:
     try:
-        # Load the data
-        if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
+        # Load the selected stock's dataset
+        file_path = stock_options[selected_stock]  # Get the filename from the dictionary
+
+        if file_path.endswith('.csv'):
+            data = pd.read_csv(file_path)
         else:
-            data = pd.read_excel(uploaded_file)
+            data = pd.read_excel(file_path)
 
         st.write("### 📊 Pratinjau Data")
         st.write(data.head(10))
