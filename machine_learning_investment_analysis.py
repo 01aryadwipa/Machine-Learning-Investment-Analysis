@@ -16,6 +16,74 @@ st.markdown("---")
 # Sidebar for title and file upload
 st.sidebar.title("Machine Learning Investment Analysis")
 
+# Sidebar: Panduan Penggunaan
+st.sidebar.markdown("### 📌 Panduan Penggunaan")
+st.sidebar.info("""
+1️⃣ **Unggah Data**  
+   - Klik tombol **Upload your dataset**  
+   - Gunakan file **Excel (XLSX) atau CSV**  
+   - Pastikan dataset memiliki kolom **quarter** dan **price**  
+
+2️⃣ **Pilih Model Machine Learning**  
+   - Tentukan model prediksi yang ingin digunakan  
+   - Model yang tersedia:  
+     - **Random Forest** (Akurasi tinggi, kompleks)  
+     - **Gradient Boosting** (Bagus untuk data non-linear)  
+     - **XGBoost** (Performa tinggi untuk dataset besar)  
+     - **Linear Regression** (Sederhana, interpretatif)  
+     - **Lasso/Ridge Regression** (Untuk mengurangi multikolinearitas)  
+
+3️⃣ **Analisis Data & Visualisasi**  
+   - Pilih variabel untuk divisualisasikan  
+   - Lihat tren data dari waktu ke waktu  
+
+4️⃣ **Prediksi Harga Saham**  
+   - Model akan memprediksi **harga wajar saham di kuartal berikutnya**  
+   - Hasil prediksi akan ditampilkan di bagian bawah  
+
+---
+
+### 📊 **Penjelasan Metrik Evaluasi Model**  
+Model yang digunakan akan dievaluasi dengan **empat metrik utama**:
+
+🔹 **Root Mean Squared Error (RMSE)**  
+   - Mengukur seberapa besar kesalahan prediksi dibandingkan dengan nilai asli  
+   - Semakin **kecil**, semakin **baik** modelnya  
+   - **Kategori:**
+     - **RMSE < 5% dari harga rata-rata** → **Baik** ✅  
+     - **RMSE 5% - 10%** → **Cukup Baik**  
+     - **RMSE > 10%** → **Kurang Baik** ❌  
+
+🔹 **Mean Absolute Error (MAE)**  
+   - Rata-rata perbedaan absolut antara harga asli dan prediksi  
+   - Nilai **lebih kecil** menunjukkan **model lebih akurat**  
+   - **Kategori:**
+     - **MAE < 5% dari harga rata-rata** → **Baik** ✅  
+     - **MAE 5% - 10%** → **Cukup Baik**  
+     - **MAE > 10%** → **Kurang Baik** ❌  
+
+🔹 **Mean Absolute Percentage Error (MAPE)**  
+   - Mengukur kesalahan prediksi dalam **persentase**  
+   - **Semakin kecil**, semakin baik  
+   - **Kategori:**
+     - **MAPE < 10%** → **Akurasi Tinggi** ✅  
+     - **MAPE 10% - 20%** → **Akurasi Cukup**  
+     - **MAPE > 20%** → **Kurang Akurat** ❌  
+
+🔹 **R-Squared (R²)**  
+   - Mengukur seberapa baik model menjelaskan variasi data  
+   - **Nilai mendekati 1** berarti model sangat akurat  
+   - **Kategori:**
+     - **R² > 0.9** → **Sangat Baik** ✅  
+     - **0.7 ≤ R² ≤ 0.9** → **Baik**  
+     - **0.5 ≤ R² < 0.7** → **Cukup Baik**  
+     - **R² < 0.5** → **Kurang Baik** ❌  
+
+⚠️ **Catatan:**  
+Hasil prediksi adalah perkiraan **berdasarkan model machine learning**. Keputusan investasi tetap menjadi tanggung jawab pengguna sepenuhnya.
+""")
+
+
 # File upload section
 #uploaded_file = st.sidebar.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
 uploaded_file = st.file_uploader("Upload your dataset (Excel or CSV)", type=["xlsx", "csv"], help="Limit 200MB per file • XLSX, CSV")
