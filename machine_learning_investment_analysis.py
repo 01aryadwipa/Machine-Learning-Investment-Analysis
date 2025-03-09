@@ -49,7 +49,7 @@ stock_options = {
     "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx"
 }
 
-selected_stock = st.sidebar.selectbox("Pilih Saham untuk Analisis", list(stock_options.keys()))
+selected_stock = st.selectbox("Pilih Saham untuk Analisis", list(stock_options.keys()))
 data_file = stock_options[selected_stock]  # Get the corresponding file name
 
 # Try to load from local file first, fallback to GitHub if not found
