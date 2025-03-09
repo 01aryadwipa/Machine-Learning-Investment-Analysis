@@ -144,6 +144,16 @@ else:
         st.write(f"📉 MAPE: {mape}%")
         st.write(f"📈 R²: {r2}")
 
+        # Feature importance (for tree-based models)
+        if selected_model_name in ["Random Forest", "Gradient Boosting", "XGBoost"]:
+            feature_importances = pd.DataFrame({
+            "Feature": X.columns,
+            "Importance": best_model.feature_importances_
+            }).sort_values(by="Importance", ascending=False)
+
+        st.write("### 🔥 Feature Importance")
+        st.write(feature_importances)        
+
 #        st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
 #        latest_row = data.iloc[-1][features].values.reshape(1, -1)
 #        predicted_next_price = best_model.predict(latest_row)[0]
