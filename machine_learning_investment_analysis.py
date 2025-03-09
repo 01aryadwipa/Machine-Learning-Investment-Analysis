@@ -45,7 +45,9 @@ Hasil prediksi adalah perkiraan berdasarkan **model machine learning**. Keputusa
 st.markdown("### 📌 Pilih Saham")
 stock_options = {
     "BBCA - PT Bank Central Asia Tbk": "bbca.xlsx",
+    "BBNI - PT Bank Negara Indonesia Tbk": "bbni.xlsx",
     "BBRI - PT Bank Rakyat Indonesia Tbk": "bbri.xlsx",
+    "BMRI - PT Bank Mandiri Tbk": "bmri.xlsx",
     "TLKM - PT Telkom Indonesia Tbk": "tlkm.xlsx"
 }
 
