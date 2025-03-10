@@ -199,7 +199,7 @@ else:
         # Skip GridSearchCV for Linear Regression (no hyperparameters)
 # Skip GridSearchCV for Linear Regression (no hyperparameters)
         if selected_model_name != "Linear Regression":
-            with st.spinner(f"🔄 Sedang melakukan pencarian hyperparameter untuk {selected_model_name}... Mohon ditunggu"):
+            with st.spinner(f"🔄 Sedang melakukan pencarian hyperparameter untuk {selected_model_name}. Mohon ditunggu..."):
                 start_time = time.time()  # Mulai stopwatch
                 grid_search = GridSearchCV(
                     estimator=selected_model,
@@ -214,7 +214,7 @@ else:
                 best_model = grid_search.best_estimator_
                 elapsed_time = round(time.time() - start_time, 2)  # Hitung waktu yang dihabiskan
                 
-            st.success(f"✅ Model {selected_model_name} telah berhasil dilatih! Total waktu yang dibutuhkan adalah {elapsed_time} detik!")
+            st.success(f"✅ Model {selected_model_name} telah berhasil dilatih! Total waktu yang dibutuhkan adalah {elapsed_time} detik.")
         else:
             with st.spinner(f"🔄 Melatih Model {selected_model_name}... Mohon tunggu"):
                 start_time = time.time()  # Mulai stopwatch
