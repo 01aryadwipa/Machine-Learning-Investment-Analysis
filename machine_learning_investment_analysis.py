@@ -218,7 +218,10 @@ else:
         r2 = round(r2_score(y_test, y_pred), 2)
 
         st.write(f"### 📊 Metrik Kinerja Model ({selected_model_name})")
-        st.write(f"✅ Parameter Terbaik: {grid_search.best_params_}")
+        if selected_model_name != "Linear Regression":
+            st.write(f"✅ Parameter Terbaik: {grid_search.best_params_}")
+        else:
+            st.write(f"✅ Model Linear Regression telah dilatih tanpa hyperparameter tuning.")
         st.write(f"📉 RMSE: Rp {rmse}")
         st.write(f"📉 MAE: Rp {mae}")
         st.write(f"📉 MAPE: {mape}%")
