@@ -166,19 +166,50 @@ else:
         y = data[target]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        grid_search = GridSearchCV(
-            estimator=selected_model,
-            param_grid={"Random Forest": {'n_estimators': [50, 100, 200]},
-                        "Gradient Boosting": {'n_estimators': [50, 100, 200]},
-                        "XGBoost": {'n_estimators': [50, 100, 200]},
-                        "Lasso Regression": {'alpha': [0.01, 0.1, 1.0]},
-                        "Ridge Regression": {'alpha': [0.01, 0.1, 1.0]},
-                        "Linear Regression": {}}.get(selected_model_name, {}),
-            cv=3, scoring='neg_mean_squared_error', verbose=1, n_jobs=-1
-        )
+        param_grid = {
+            "Random Forest": {
+                'n_estimators': [50, 100, 200, 500], 
+                'max_depth': [None, 10, 20, 30],  
+                'min_samples_split': [2, 5, 10],  
+                'min_samples_leaf': [1, 2, 4]
+            },
+            "Gradient Boosting": {
+                'n_estimators': [50, 100, 200, 500],  
+                'learning_rate': [0.01, 0.05, 0.1, 0.2],  
+                'max_depth': [3, 5, 10],  
+                'subsample': [0.7, 0.85, 1.0]
+            },
+            "XGBoost": {
+                'n_estimators': [50, 100, 200, 500],  
+                'learning_rate': [0.01, 0.05, 0.1, 0.2],  
+                'max_depth': [3, 5, 10],  
+                'subsample': [0.7, 0.85, 1.0],  
+                'colsample_bytree': [0.7, 0.85, 1.0]
+            },
+            "Lasso Regression": {
+                'alpha': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0]  
+            },
+            "Ridge Regression": {
+                'alpha': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0]
+            },
+            "Linear Regression": {}  # No tuning needed, skip GridSearchCV
+        }
 
-        grid_search.fit(X_train, y_train)
-        best_model = grid_search.best_estimator_
+        # Skip GridSearchCV for Linear Regression (no hyperparameters)
+        if selected_model_name != "Linear Regression":
+            grid_search = GridSearchCV(
+                estimator=selected_model,
+                param_grid=param_grid.get(selected_model_name, {}),
+                cv=5,  # Increased from 3 to 5 for better stability
+                scoring='neg_mean_squared_error',
+                verbose=1,
+                n_jobs=-1
+            )
+            
+            grid_search.fit(X_train, y_train)
+            best_model = grid_search.best_estimator_
+        else:
+            best_model = selected_model.fit(X_train, y_train)  # Direct training
 
         y_pred = best_model.predict(X_test)
         rmse = round(np.sqrt(mean_squared_error(y_test, y_pred)), 2)
