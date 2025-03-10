@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import numpy as np
 import re
+import time
 
 # Title and description
 st.markdown("<h1 style='text-align: center; margin-bottom: 50px;'>Machine Learning Investment Analysis</h1>", unsafe_allow_html=True)
@@ -196,20 +197,31 @@ else:
         }
 
         # Skip GridSearchCV for Linear Regression (no hyperparameters)
+# Skip GridSearchCV for Linear Regression (no hyperparameters)
         if selected_model_name != "Linear Regression":
-            grid_search = GridSearchCV(
-                estimator=selected_model,
-                param_grid=param_grid.get(selected_model_name, {}),
-                cv=5,  # Increased from 3 to 5 for better stability
-                scoring='neg_mean_squared_error',
-                verbose=1,
-                n_jobs=-1
-            )
-            
-            grid_search.fit(X_train, y_train)
-            best_model = grid_search.best_estimator_
+            with st.spinner(f"🔄 Sedang melakukan pencarian hyperparameter untuk {selected_model_name}... Mohon tunggu"):
+                start_time = time.time()  # Mulai stopwatch
+                grid_search = GridSearchCV(
+                    estimator=selected_model,
+                    param_grid=param_grid.get(selected_model_name, {}),
+                    cv=5,  # Meningkatkan jumlah lipatan cross-validation
+                    scoring='neg_mean_squared_error',
+                    verbose=1,
+                    n_jobs=-1
+                )
+                
+                grid_search.fit(X_train, y_train)
+                best_model = grid_search.best_estimator_
+                elapsed_time = round(time.time() - start_time, 2)  # Hitung waktu yang dihabiskan
+                
+            st.success(f"✅ Model {selected_model_name} telah selesai dilatih dalam {elapsed_time} detik!")
         else:
-            best_model = selected_model.fit(X_train, y_train)  # Direct training
+            with st.spinner(f"🔄 Melatih Model {selected_model_name}... Mohon tunggu"):
+                start_time = time.time()  # Mulai stopwatch
+                best_model = selected_model.fit(X_train, y_train)  # Langsung latih model tanpa GridSearchCV
+                elapsed_time = round(time.time() - start_time, 2)  # Hitung waktu yang dihabiskan
+                
+            st.success(f"✅ Model {selected_model_name} telah selesai dilatih dalam {elapsed_time} detik!")
 
         y_pred = best_model.predict(X_test)
         rmse = round(np.sqrt(mean_squared_error(y_test, y_pred)), 2)
