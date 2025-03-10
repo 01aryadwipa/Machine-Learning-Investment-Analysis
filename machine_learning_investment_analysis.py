@@ -193,15 +193,25 @@ else:
         st.write(f"📉 MAPE: {mape}%")
         st.write(f"📈 R²: {r2}")
 
-        # Feature importance (for tree-based models)
+        # Feature importance handling for different model types
         if selected_model_name in ["Random Forest", "Gradient Boosting", "XGBoost"]:
             feature_importances = pd.DataFrame({
-            "Feature": X.columns,
-            "Importance": best_model.feature_importances_
+                "Feature": X.columns,
+                "Importance": best_model.feature_importances_
             }).sort_values(by="Importance", ascending=False)
 
-        st.write("### 🔥 Feature Importance")
-        st.write(feature_importances)        
+            st.write("### 🔥 Feature Importance")
+            st.write(feature_importances)
+
+        elif selected_model_name in ["Lasso Regression", "Ridge Regression", "Linear Regression"]:
+            feature_importances = pd.DataFrame({
+                "Feature": X.columns,
+                "Coefficient": best_model.coef_
+            }).sort_values(by="Coefficient", ascending=False)
+
+            st.write("### 🔥 Model Coefficients (Linear Models)")
+            st.write(feature_importances)
+  
 
 #        st.subheader("📈 Perkiraan Harga Wajar untuk Periode Selanjutnya")
 #        latest_row = data.iloc[-1][features].values.reshape(1, -1)
