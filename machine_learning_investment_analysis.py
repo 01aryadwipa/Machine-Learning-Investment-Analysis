@@ -148,12 +148,12 @@ else:
     st.subheader("🤖 Analisis Machine Learning")
 
     model_options = {
-        "Random Forest": RandomForestRegressor(),
-        "Gradient Boosting": GradientBoostingRegressor(),
-        "XGBoost": XGBRegressor(),
         "Linear Regression": LinearRegression(),
         "Lasso Regression": Lasso(),
-        "Ridge Regression": Ridge()
+        "Ridge Regression": Ridge(),
+        "Random Forest": RandomForestRegressor(),
+        "Gradient Boosting": GradientBoostingRegressor(),
+        "XGBoost": XGBRegressor()
     }
 
     selected_model_name = st.selectbox("📌 Pilih Model Machine Learning", list(model_options.keys()))
